@@ -2,7 +2,6 @@
   "name": "react-api-request",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://data.coa.gov.tw",
   "homepage": "https://m-27.github.io/react-api-request",
   "dependencies": {
     "@babel/core": "7.8.4",
