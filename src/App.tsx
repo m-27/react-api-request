@@ -67,7 +67,7 @@ class App extends React.Component<{}, FoodState> {
 
     let that = this;
 
-    fetch('https://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx')
+    fetch('/foods')
     .then(function(response) {
         return response.json();
     })
