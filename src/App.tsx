@@ -67,22 +67,32 @@ class App extends React.Component<{}, FoodState> {
 
     let that = this;
 
-    fetch('/foods')
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(jsonStr) {
+    if(localStorage.getItem("travelFoodList") === null){
+      const cors = 'https://cors-anywhere.herokuapp.com/'; // use cors-anywhere to fetch api data
+      const url = 'https://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx'; // origin api url
+      fetch(`${cors}${url}`)
+      .then(response => response.json())
+      .then(function(jsonStr) {
         that.setState({ 
           data: jsonStr, 
           foodData: jsonStr
         });
-    });
+        localStorage.setItem("travelFoodList", JSON.stringify(jsonStr));
+      });
+    }else{
+      const jsonStr = localStorage.getItem("travelFoodList") as any;
+      that.setState({ 
+        data: JSON.parse(jsonStr), 
+        foodData: JSON.parse(jsonStr)
+      });
+    }
   }
   render() {
-    const newCity = this.state.data.filter((elem: { City: any; }, index: any, self: any[]) => 
+    let { data, town, foodData, citySelected, townSeleted} = this.state;
+    const newCity = data.filter((elem: { City: any; }, index: any, self: any[]) => 
       self.findIndex((t: { City: any; }) => {return t.City === elem.City }) === index);
 
-    const newTown = this.state.town.filter((elem: { Town: any; }, index: any, self: any[]) => 
+    const newTown = town.filter((elem: { Town: any; }, index: any, self: any[]) => 
       self.findIndex((t: { Town: any; }) => {return t.Town === elem.Town }) === index);
 
     return (
@@ -90,14 +100,14 @@ class App extends React.Component<{}, FoodState> {
         <h1 id="title">農村地方美食小吃特色料理 {`(${this.state.foodData.length})`}</h1>
         <div className="select-fields">
           <fieldset className="fields">
-            <Select list={newCity} handleChange={this.handleCityChange} defaultValue={`請選擇行政區域...`} flag={0} selected={this.state.citySelected}/>
-            <Select list={newTown} handleChange={this.handleTownChange} defaultValue={`請選擇鄉鎮區...`} flag={1} selected={this.state.townSeleted}/>
+            <Select list={newCity} handleChange={this.handleCityChange} defaultValue={`請選擇行政區域...`} flag={0} selected={citySelected}/>
+            <Select list={newTown} handleChange={this.handleTownChange} defaultValue={`請選擇鄉鎮區...`} flag={1} selected={townSeleted}/>
           </fieldset>
         </div>
         <div id="Container">
           <div className="items-container">
             <div className={`items-wrapper`}>
-              {this.state.foodData.map((elem: any, i: any)=>
+              {foodData.map((elem: any, i: any)=>
                 <div key={i} className="item">
                   <div className="items-mask"></div>
                   <img src={`${elem.PicURL}`} alt={`${elem.Name}`}/>
