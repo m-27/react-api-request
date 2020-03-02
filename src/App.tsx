@@ -10,7 +10,8 @@ interface FoodState {
   citySelected: string,
   town: any[],
   townSeleted: string,
-  foodData: any[]
+  foodData: any[], 
+  isLoading: boolean
 }
 
 class App extends React.Component<{}, FoodState> {
@@ -21,7 +22,8 @@ class App extends React.Component<{}, FoodState> {
       citySelected : "",
       town: [],
       townSeleted: "",
-      foodData: []
+      foodData: [],
+      isLoading: true
     };
     this.handleCityChange = this.handleCityChange.bind(this);
     this.handleTownChange = this.handleTownChange.bind(this);
@@ -56,7 +58,7 @@ class App extends React.Component<{}, FoodState> {
   // 選擇鄉鎮區域
   handleTownChange(event: { Town: any; }){
     let val = event? event.Town: "";
-    let town = val.length === 0 ? this.state.town : this.state.town.filter((elem: any) => elem.Town === val);
+    let town = val.length === 0 ? this.state.citySelected.length === 0 ? this.state.data : this.state.town  : this.state.town.filter((elem: any) => elem.Town === val);
     this.setState({
       townSeleted: val, 
       foodData: town
@@ -75,7 +77,8 @@ class App extends React.Component<{}, FoodState> {
       .then(function(jsonStr) {
         that.setState({ 
           data: jsonStr, 
-          foodData: jsonStr
+          foodData: jsonStr,
+          isLoading: false
         });
         localStorage.setItem("travelFoodList", JSON.stringify(jsonStr));
       });
@@ -83,21 +86,42 @@ class App extends React.Component<{}, FoodState> {
       const jsonStr = localStorage.getItem("travelFoodList") as any;
       that.setState({ 
         data: JSON.parse(jsonStr), 
-        foodData: JSON.parse(jsonStr)
+        foodData: JSON.parse(jsonStr),
+        isLoading: false
       });
     }
   }
   render() {
-    let { data, town, foodData, citySelected, townSeleted} = this.state;
+    let { data, town, foodData, citySelected, townSeleted, isLoading} = this.state;
     const newCity = data.filter((elem: { City: any; }, index: any, self: any[]) => 
       self.findIndex((t: { City: any; }) => {return t.City === elem.City }) === index);
 
     const newTown = town.filter((elem: { Town: any; }, index: any, self: any[]) => 
       self.findIndex((t: { Town: any; }) => {return t.Town === elem.Town }) === index);
 
+    let loadingElem = isLoading ? 
+      <div className="loader-wrap"><div className="loader"></div></div>:
+      <div className={`items-wrapper`}>
+        {foodData.map((elem: any, i: any)=>
+          <div key={i} className="item">
+            <div className="items-mask"></div>
+            <img src={`${elem.PicURL}`} alt={`${elem.Name}`}/>
+            <div className="city">{elem.City}</div>
+            <div className="food-info">
+              <div className="town">{elem.Town}</div>
+              <div className="name">{elem.Name}</div>
+              <div className="hostWords">
+                <hr/>
+                {elem.HostWords}
+              </div>
+            </div>
+          </div>
+        )}
+      </div> as JSX.Element;
+
     return (
       <div id="wrapper">
-        <h1 id="title">農村地方美食小吃特色料理 {`(${this.state.foodData.length})`}</h1>
+        <h1 id="title">農村地方美食小吃特色料理</h1>
         <div className="select-fields">
           <fieldset className="fields">
             <Select list={newCity} handleChange={this.handleCityChange} defaultValue={`請選擇行政區域...`} flag={0} selected={citySelected}/>
@@ -106,23 +130,7 @@ class App extends React.Component<{}, FoodState> {
         </div>
         <div id="Container">
           <div className="items-container">
-            <div className={`items-wrapper`}>
-              {foodData.map((elem: any, i: any)=>
-                <div key={i} className="item">
-                  <div className="items-mask"></div>
-                  <img src={`${elem.PicURL}`} alt={`${elem.Name}`}/>
-                  <div className="city">{elem.City}</div>
-                  <div className="food-info">
-                    <div className="town">{elem.Town}</div>
-                    <div className="name">{elem.Name}</div>
-                    <div className="hostWords">
-                      <hr/>
-                      {elem.HostWords}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            {loadingElem}
           </div>
         </div>
       </div>
