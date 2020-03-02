@@ -1,3 +1,5 @@
+@import "./variables.less";
+
 #Container{
   .items-container{
     .loader-wrap{
@@ -26,12 +28,19 @@
       100% { transform: rotate(360deg); }
     }
     .items-wrapper{
+      overflow: auto;
+      width: 100%;
+      margin: 0 auto;
       .item{
+        width: 46%;
+        margin: 1% 2%;
+        height: 24vmax;
+        min-height: 150px;
         // border: 1px solid;
-        width: 30.5vmax;
+        // width: 30.5vmax;
         float: left;
-        margin: 0 10px 10px 10px;
-        height: 17vmax;
+        // margin: 0 10px 10px 10px;
+        // height: 17vmax;
         overflow: hidden;
         position: relative;
         .items-mask{
@@ -95,6 +104,22 @@
           .hostWords{
             max-height: 66px;
           }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: @sizes[tb]) {
+  #Container{
+    .items-container{
+      .items-wrapper{
+        width: 90%;
+        .item{
+          width: 31%;
+          margin: 1% 1%;
+          height: 17vmax;
+          min-height: unset;
         }
       }
     }

@@ -1,3 +1,5 @@
+@import "./variables.less";
+
 .select-fields{
   background: #fff;
   .fields{
@@ -5,10 +7,10 @@
     height: 50px;
     line-height: 50px;
     padding: 10px 0 0 0;
-    width: 540px;
+    width: 100%;
     margin: 0 auto;
     .dropdown-container{
-      width: 250px;
+      width: 45vw;
       margin: 0 10px;
       float: left;
       cursor: pointer;
@@ -69,6 +71,17 @@
             }
           }
         }
+      }
+    }
+  }
+}
+
+@media (min-width: @sizes[tb]) {
+  .select-fields{
+    .fields{
+      width: 540px;
+      .dropdown-container{
+        width: 250px;
       }
     }
   }
