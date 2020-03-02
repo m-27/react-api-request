@@ -133,6 +133,7 @@ class App extends React.Component<{}, FoodState> {
             {loadingElem}
           </div>
         </div>
+        <footer>政府資料開放平台<br/>https://data.gov.tw/dataset/6037</footer>
       </div>
     )
   }
